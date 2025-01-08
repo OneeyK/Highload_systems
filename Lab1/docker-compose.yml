@@ -1,0 +1,58 @@
+version: '3.8'
+services:
+  hazelcast-node1:
+    image: hazelcast/hazelcast:5.4.0
+    container_name: hazelcast-node1
+    environment:
+      - HZ_CLUSTERNAME=my-cluster
+      - HZ_NETWORK_PUBLICADDRESS=192.168.31.36:5701
+      - HAZELCAST_CONFIG=hazelcast.yml
+    volumes:
+      - /Users/oneey/Desktop/Power/Lab1/hazelcast.yml:/opt/hazelcast/hazelcast.yml
+    networks:
+      - hazelcast-network
+    ports:
+      - "5701:5701"
+
+  hazelcast-node2:
+    image: hazelcast/hazelcast:5.4.0
+    container_name: hazelcast-node2
+    environment:
+      - HZ_CLUSTERNAME=my-cluster
+      - HZ_NETWORK_PUBLICADDRESS=192.168.31.36:5702
+      - HAZELCAST_CONFIG=hazelcast.yml
+    volumes:
+      - /Users/oneey/Desktop/Power/Lab1/hazelcast.yml:/opt/hazelcast/hazelcast.yml
+    networks:
+      - hazelcast-network
+    ports:
+      - "5702:5701"
+
+  hazelcast-node3:
+    image: hazelcast/hazelcast:5.4.0
+    container_name: hazelcast-node3
+    environment:
+      - HZ_CLUSTERNAME=my-cluster
+      - HZ_NETWORK_PUBLICADDRESS=192.168.31.36:5703
+      - HAZELCAST_CONFIG=hazelcast.yml
+    volumes:
+      - /Users/oneey/Desktop/Power/Lab1/hazelcast.yml:/opt/hazelcast/hazelcast.yml
+    networks:
+      - hazelcast-network
+    ports:
+      - "5703:5701"
+
+  management-center:
+    image: hazelcast/management-center:latest
+    container_name: management-center
+    environment:
+      - MC_INIT_CLUSTER=my-cluster
+      - MC_MAP_HAZELCAST_CLUSTER_ADDRESSES=host.docker.internal:5701,host.docker.internal:5702,host.docker.internal:5703
+    networks:
+      - hazelcast-network
+    ports:
+      - "8080:8080"
+
+networks:
+  hazelcast-network:
+    driver: bridge
