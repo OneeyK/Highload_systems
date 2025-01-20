@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  mongo-primary:
+    image: mongo:6.0
+    container_name: mongo-primary
+    restart: always
+    networks:
+      - mongo-net
+    ports:
+      - "27017:27017"
+    command: --replSet rs0 --bind_ip localhost,mongo-primary
+    environment:
+      MONGO_INITDB_REPLICA_SET_NAME: rs0
+
+  mongo-secondary-1:
+    image: mongo:6.0
+    container_name: mongo-secondary-1
+    restart: always
+    networks:
+      - mongo-net
+    ports:
+      - "27018:27017"
+    command: --replSet rs0 --bind_ip localhost,mongo-secondary-1
+    environment:
+      MONGO_INITDB_REPLICA_SET_NAME: rs0
+
+  mongo-secondary-2:
+    image: mongo:6.0
+    container_name: mongo-secondary-2
+    restart: always
+    networks:
+      - mongo-net
+    ports:
+      - "27019:27017" 
+    command: --replSet rs0 --bind_ip localhost,mongo-secondary-2
+    environment:
+      MONGO_INITDB_REPLICA_SET_NAME: rs0
+    
+  python-client:
+    image: python
+    container_name: python-client
+    networks:
+      - mongo-net
+    volumes:
+      - .:/usr/src/app
+    command: pip install pymongo && python /usr/src/app/counter.py
+
+networks:
+  mongo-net:
+    driver: bridge
